@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Contact Directory</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --background: #f8fafc;
+            --text: #1e293b;
+        }
+        body {
+            font-family: system-ui, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h2 { margin-top: 0; }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .contact-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Contact Input Form -->
+    <div class="card">
+        <h2>Add New Contact</h2>
+        <form id="contactForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required placeholder="John Doe">
+            </div>
+            
+            <div class="form-group">
+                <label for="country">Country</label>
+                <select id="country" required>
+                    <option value="">Select a country</option>
+                    <option value="Kenya">Kenya</option>
+                    <option value="United States">United States</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="India">India</option>
+                    <option value="South Africa">South Africa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" required placeholder="+254 700 000000">
+            </div>
+
+            <button type="submit">Save Contact</button>
+        </form>
+    </div>
+
+    <!-- Saved Contacts List Display -->
+    <h2>Saved Contacts</h2>
+    <div id="contactsList"></div>
+</div>
+
+<script>
+    const contactForm = document.getElementById('contactForm');
+    const contactsList = document.getElementById('contactsList');
+
+    // Load contacts from LocalStorage on page load
+    let contacts = JSON.parse(localStorage.getItem('globalContacts')) || [];
+
+    function displayContacts() {
+        contactsList.innerHTML = '';
+        if (contacts.length === 0) {
+            contactsList.innerHTML = '<p>No contacts saved yet.</p>';
+            return;
+        }
+        
+        contacts.forEach((contact) => {
+            const div = document.createElement('div');
+            div.className = 'contact-item';
+            div.innerHTML = `
+                <strong>${contact.name}</strong><br>
+                📍 Country: ${contact.country}<br>
+                📞 Phone: ${contact.phone}
+            `;
+            contactsList.appendChild(div);
+        });
+    }
+
+    // Handle form submission
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const newContact = {
+            name: document.getElementById('name').value,
+            country: document.getElementById('country').value,
+            phone: document.getElementById('phone').value
+        };
+
+        contacts.push(newContact);
+        localStorage.setItem('globalContacts', JSON.stringify(contacts));
+        
+        displayContacts();
+        contactForm.reset();
+    });
+
+    // Initial render
+    displayContacts();
+</script>
+
+</body>
+</html>
